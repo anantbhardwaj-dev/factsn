@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Fact Explorer | Minor Project</title>
+    <style>
+        /* CSS STYLES */
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffe66d;
+            --bg-color: #f7fff7;
+            --text-color: #2f3e46;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'cursive', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: background 0.5s ease;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .project-credits {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            margin-top: 40px;
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 8px solid var(--secondary-color);
+        }
+
+        .category-tabs {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background: #eee;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .fact-box {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #fact-text {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            line-height: 1.4;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-next { background: var(--primary-color); color: white; }
+        .btn-speak { background: var(--secondary-color); color: white; }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            color: #777;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            #fact-text { font-size: 1.4rem; }
+            .btn { padding: 10px 20px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌟 Fact Explorer for Kids 🌟</h1>
+    <div class="project-credits">Created by: Anant Bhardwaj, Nishchay Kumar & Kunal Vishwakarma</div>
+</header>
+
+<div class="container">
+    <div class="category-tabs">
+        <button class="tab-btn active" onclick="setCategory('all', this)">All Facts</button>
+        <button class="tab-btn" onclick="setCategory('space', this)">🚀 Space</button>
+        <button class="tab-btn" onclick="setCategory('animals', this)">🦁 Animals</button>
+        <button class="tab-btn" onclick="setCategory('body', this)">🦴 Human Body</button>
+    </div>
+
+    <div class="fact-box">
+        <p id="fact-text">Click the button below to discover a fun fact!</p>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-next" onclick="generateFact()">Next Fact ✨</button>
+        <button class="btn btn-speak" onclick="speakFact()">📢 Listen</button>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 Minor Project - Nishchay & Kunal
+</footer>
+
+<script>
+    /* JAVASCRIPT LOGIC */
+    const facts = [
+        { text: "A day on Venus is longer than a year on Venus!", cat: "space" },
+        { text: "Jupiter is the fastest spinning planet in our solar system.", cat: "space" },
+        { text: "Honeybees can flap their wings 200 times per second!", cat: "animals" },
+        { text: "A blue whale's heart is as big as a bumper car.", cat: "animals" },
+        { text: "Your heart beats about 100,000 times in one single day!", cat: "body" },
+        { text: "Humans and giraffes have the same number of neck bones: Seven!", cat: "body" },
+        { text: "Octopuses have three hearts and blue blood.", cat: "animals" },
+        { text: "One million Earths could fit inside the Sun.", cat: "space" },
+        { text: "Babies have about 100 more bones than adults!", cat: "body" },
+        { text: "A shark doesn't have a single bone in its body; it's all cartilage.", cat: "animals" },
+        { text: "Space is completely silent because there is no air for sound to travel.", cat: "space" },
+        { text: "Your nose can remember 50,000 different scents!", cat: "body" }
+    ];
+
+    let currentCategory = 'all';
+    const colors = ['#f7fff7', '#fff0f0', '#f0faff', '#fffdf0', '#f5f0ff'];
+
+    function setCategory(cat, btn) {
+        currentCategory = cat;
+        // Update UI Tabs
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        generateFact();
+    }
+
+    function generateFact() {
+        const filteredFacts = currentCategory === 'all' 
+            ? facts 
+            : facts.filter(f => f.cat === currentCategory);
+
+        const randomIndex = Math.floor(Math.random() * filteredFacts.length);
+        const factElement = document.getElementById('fact-text');
+        
+        // Change background color randomly
+        document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Reset animation
+        factElement.style.animation = 'none';
+        factElement.offsetHeight; // trigger reflow
+        factElement.style.animation = null;
+        
+        factElement.innerText = filteredFacts[randomIndex].text;
+    }
+
+    function speakFact() {
+        const text = document.getElementById('fact-text').innerText;
+        if ('speechSynthesis' in window) {
+            // Stop any current speaking
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.pitch = 1.2; // Slightly higher pitch for kids' vibe
+            utterance.rate = 0.9;  // Slightly slower for clarity
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("Sorry, your browser doesn't support the 'Listen' feature!");
+        }
+    }
+
+    // Load initial fact
+    window.onload = generateFact;
+</script>
+
+</body>
+</html>
